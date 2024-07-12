@@ -15,24 +15,29 @@ class QuestionSerializer(serializers.ModelSerializer):
 
 class QuizSerializer(serializers.ModelSerializer):
   class Meta:
-      model = Quiz
-      fields = ['id', 'name', 'time_limit']
+    model = Quiz
+    fields = ['id', 'name', 'time_limit', 'no_of_questions']
+
 
 class QuizDetailSerializer(serializers.ModelSerializer):
   questions = QuestionSerializer(many=True)
+  no_of_questions = serializers.IntegerField(read_only=True)
 
   class Meta:
     model = Quiz
-    fields = ['id', 'name', 'questions', 'time_limit']
+    fields = ['id', 'name', 'no_of_questions', 'time_limit', 'questions']
 
   def create(self, validated_data):
     questions_data = validated_data.pop('questions')
     quiz = Quiz.objects.create(**validated_data)
+    print(quiz.id)
     for question_data in questions_data:
-      options_data = question_data.pop('options')
-      question = Question.objects.create(quiz=quiz, **question_data)
-      for option_data in options_data:
-          Option.objects.create(question=question, **option_data)
+        options_data = question_data.pop('options')
+        question = Question.objects.create(quiz=quiz, **question_data)
+        for option_data in options_data:
+            Option.objects.create(question=question, **option_data)
+    quiz.no_of_questions = quiz.questions.count()
+    quiz.save()
     return quiz
 
   def update(self, instance, validated_data):
@@ -50,7 +55,7 @@ class QuizDetailSerializer(serializers.ModelSerializer):
         question.save()
         for option_data in options_data:
           option_id = option_data.get('id')
-          if (option_id):
+          if option_id:
             option = Option.objects.get(id=option_id, question=question)
             option.text = option_data.get('text', option.text)
             option.is_correct = option_data.get('is_correct', option.is_correct)
@@ -58,7 +63,9 @@ class QuizDetailSerializer(serializers.ModelSerializer):
           else:
             Option.objects.create(question=question, **option_data)
       else:
-        question = Question.objects.create(quiz=instance, **question_data)
-        for option_data in options_data:
-          Option.objects.create(question=question, **option_data)
+          question = Question.objects.create(quiz=instance, **question_data)
+          for option_data in options_data:
+              Option.objects.create(question=question, **option_data)
+    instance.no_of_questions = instance.questions.count()
+    instance.save()
     return instance

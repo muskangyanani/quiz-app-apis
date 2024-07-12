@@ -4,6 +4,7 @@ from django.db import models
 class Quiz(models.Model):
   name = models.CharField(max_length=100)
   time_limit = models.IntegerField() # in minutes
+  no_of_questions = models.IntegerField(default=0)
   
 class Question(models.Model):
   quiz = models.ForeignKey(Quiz, related_name='questions', on_delete=models.CASCADE)

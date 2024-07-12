@@ -9,3 +9,7 @@ class QuizCreateView(generics.CreateAPIView):
 class QuizListView(generics.ListAPIView):
     queryset = Quiz.objects.all()
     serializer_class = QuizSerializer
+
+class QuizDetailView(generics.RetrieveAPIView):
+    queryset = Quiz.objects.all()
+    serializer_class = QuizDetailSerializer
