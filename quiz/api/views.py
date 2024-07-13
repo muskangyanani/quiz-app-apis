@@ -13,3 +13,4 @@ class QuizListView(generics.ListAPIView):
 class QuizDetailView(generics.RetrieveAPIView):
     queryset = Quiz.objects.all()
     serializer_class = QuizDetailSerializer
+    lookup_field = 'id'

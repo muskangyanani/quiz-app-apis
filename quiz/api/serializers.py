@@ -6,6 +6,13 @@ class OptionSerializer(serializers.ModelSerializer):
     model = Option
     fields = ['id', 'text', 'is_correct']
 
+class QuestionDetailSerializer(serializers.ModelSerializer):
+  options = OptionSerializer(many=True, read_only=True)
+  
+  class Meta:
+    model = Question
+    fields = ['id', 'question_text', 'options','no_of_questions', 'correct_answer']
+
 class QuestionSerializer(serializers.ModelSerializer):
   options = OptionSerializer(many=True)
 
