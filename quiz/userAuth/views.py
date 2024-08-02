@@ -17,14 +17,29 @@ class RegisterView(generics.CreateAPIView):
     permission_classes = ([AllowAny])
     serializer_class = RegisterSerializer 
 
-@api_view(['GET', 'POST'])
+# @api_view(['GET', 'POST'])
+# @permission_classes([IsAuthenticated])
+# # def dashboard(request):
+#     if request.method == 'GET':
+#         response = f"Welcome {request.user.username}"
+#         return Response({'response': response}, status=status.HTTP_200_OK)
+#     elif request.method == 'POST':
+#         text = request.data['text']
+#         response = f"Welcome {request.user.username}. You sent: {text}"
+#         return Response({'response': response}, status=status.HTTP_200_OK)
+#     return Response({'response': 'Invalid request'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+# get user detail view
+@api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def dashboard(request):
+def userDetail(request):
     if request.method == 'GET':
-        response = f"Welcome {request.user.username}"
+        user = request.user
+        profile = Profile.objects.get(user=user)
+        response = {
+            'username': user.username,
+            'email': user.email,
+            'full_name': profile.full_name
+        }
         return Response({'response': response}, status=status.HTTP_200_OK)
-    elif request.method == 'POST':
-        text = request.data['text']
-        response = f"Welcome {request.user.username}. You sent: {text}"
-        return Response({'response': response}, status=status.HTTP_200_OK)
-    return Response({'response': 'Invalid request'}, status=status.HTTP_400_BAD_REQUEST)
