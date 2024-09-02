@@ -7,5 +7,4 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('register/', RegisterView.as_view(), name='auth_register'),
     path('user/', userDetail, name='user_detail')
-    # path('dashboard/', dashboard, name='dashboard'),
 ]
