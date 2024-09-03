@@ -11,14 +11,15 @@ class User(AbstractUser):
     USERNAME_FIELD = 'email'
     def __str__(self):
         return self.username
-    
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     full_name = models.CharField(max_length=100, blank=True)
+    image = models.ImageField(upload_to='profile_images/', blank=True, null=True)  # Add this line
+
     def __str__(self):
         return self.user.username
-    
+
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
