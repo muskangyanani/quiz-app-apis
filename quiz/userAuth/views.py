@@ -38,22 +38,21 @@ def userDetail(request):
 @api_view(['PATCH'])
 @permission_classes([IsAuthenticated])
 def updateProfile(request):
-    user = request.user
-    profile = Profile.objects.get(user=user)
+    try:
+        profile = request.user.profile
+        data = request.data
+        
+        # Update full_name and image if they are provided in the request
+        if 'full_name' in data:
+            profile.full_name = data['full_name']
+        if 'image' in data:
+            profile.image = data['image']
 
-    if request.method == 'PATCH':
-        serializer = ProfileSerializer(profile, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            user.username = request.data.get('username', user.username)
-            user.save()
-            response = {
-                'id': user.id,
-                'username': user.username,
-                'email': user.email,
-                'full_name': profile.full_name,
-                'image': str(profile.image.url) if profile.image else None
-            }
-            return Response({'response': response}, status=status.HTTP_200_OK)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        profile.save()
+
+        # Serialize the updated profile and return it in the response
+        serializer = ProfileSerializer(profile)
+        return Response({"response": serializer.data}, status=status.HTTP_200_OK)
+
+    except Profile.DoesNotExist:
+        return Response({"error": "Profile does not exist"}, status=status.HTTP_400_BAD_REQUEST)

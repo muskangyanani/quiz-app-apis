@@ -15,7 +15,7 @@ class User(AbstractUser):
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     full_name = models.CharField(max_length=100, blank=True)
-    image = models.ImageField(upload_to='profile_images/', blank=True, null=True)  # Add this line
+    image = models.ImageField(upload_to='profile_images/', blank=True, null=True)  
 
     def __str__(self):
         return self.user.username
